@@ -21,4 +21,13 @@
         where userName=#{name}
         ]]>
 </select>
+
+    <select id="login" parameterType="java.lang.String"
+            resultType="com.example.chatserver.bean.User">
+<![CDATA[
+        select *
+        from user
+        where userName=#{userName} and password=#{password} and type=#{type}
+        ]]>
+</select>
 </mapper>

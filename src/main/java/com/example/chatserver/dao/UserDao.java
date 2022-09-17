@@ -2,6 +2,7 @@ package com.example.chatserver.dao;
 
 import com.example.chatserver.bean.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /*
@@ -11,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDao extends BaseDao<User>{
     User loadByName(String name);
+    User login(@Param("userName") String username,@Param("password") String password,@Param("type") String type);
 }
