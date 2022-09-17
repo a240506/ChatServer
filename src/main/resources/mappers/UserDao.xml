@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- ***** 每个dao接口对应一个映射文件 -->
+<!-- (1) mapper根标签中的namespace是dao接口的全名； -->
+<!-- (2) mapper根标签对应的CRUD操作的四个标签 为：select/insert/delelte/update； -->
+<!-- (3) CRUD标签是可以对dao接口中的每个方法配置对应的sql； -->
+<!-- (4) CRUD标签中的id属性表示接口的方法名称； -->
+<!-- (5) CRUD标签中的resultType属性表示接口方法的返回类型全名； -->
+<!-- (6) CRUD标签中的parameterType属性表示接口方法的参数类型全名； -->
+<!-- (7) CRUD标签中的内容存放接口方法对应的sql； -->
+<!-- (8) sql中引用参数时，以#号打头，大括号引住； -->
+<mapper namespace="com.example.chatserver.dao.UserDao">
+
+    <select id="loadByName" parameterType="java.lang.String"
+            resultType="com.example.chatserver.bean.User">
+<![CDATA[
+        select *
+        from user
+        where userName=#{name}
+        ]]>
+</select>
+</mapper>
