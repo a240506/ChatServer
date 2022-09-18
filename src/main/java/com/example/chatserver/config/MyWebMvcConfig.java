@@ -17,6 +17,8 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                 .allowedHeaders("*")
                 .allowedMethods("*")
                 .maxAge(1800)
-                .allowedOrigins("*");
+                // 后端必须添加这个才可以前跨域不丢失cookie ，服务器session才可以使用
+                //还必须指定请求域名，不可以用 *
+                .allowedOrigins("http://localhost:8080/").allowCredentials(true);
     }
 }
