@@ -25,4 +25,14 @@ public class UserServiceImpl {
     public User adminLogin(String username,  String password) {
         return UserDao.login(username,password,"admin");
     }
+    //用户注册
+    public Long userRegister(User bean) {
+        bean.setType("user");
+        return UserDao.insert(bean);
+    }
+    //管理员注册
+    public Long adminRegister(User bean) {
+        bean.setType("admin");
+        return UserDao.insert(bean);
+    }
 }

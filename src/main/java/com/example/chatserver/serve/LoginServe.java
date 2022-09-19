@@ -32,10 +32,8 @@ public class LoginServe {
 
 
     @RequestMapping( value = "/login",method = RequestMethod.POST)
-    public R getRoles(HttpServletRequest request,@RequestBody LoginParam params){
+    public R login(HttpServletRequest request,@RequestBody LoginParam params){
         String  captcha=(String)request.getSession().getAttribute("captcha");
-        System.out.println(captcha);
-
         //判断验证码是否正确
         if(!params.getVcCode().equals(captcha)){
             return Tool.result(null,0,"登录失败,验证码错误");
@@ -56,6 +54,32 @@ public class LoginServe {
         }
         return Tool.result(null,0,"登录失败,账号或者密码错误");
     }
+
+    @RequestMapping( value = "/register",method = RequestMethod.POST)
+    // 这里注册也用 LoginParam 都一样
+    public R register(HttpServletRequest request,@RequestBody LoginParam params){
+        String  captcha=(String)request.getSession().getAttribute("captcha");
+        //判断验证码是否正确
+        if(!params.getVcCode().equals(captcha)){
+            return Tool.result(null,0,"登录失败,验证码错误");
+        }
+        //这里判断用户名是否重复
+        if(userService.loadByName(params.getUserName())!=null){
+            return Tool.result(null,0,"用户名重复");
+        }
+        User user=new User();
+        user.setUserName(params.getUserName());
+        user.setPassword(params.getPassword());
+        user.setType(params.getType());
+
+        long l= userService.userRegister(user);
+        if(l==1){
+            return Tool.result(null,200,"注册成功");
+        }
+        return Tool.result(null,0,"注册失败");
+    }
+
+
     //获取验证码
     //链接后的数字是随机数，保证不会被浏览器缓存，没有其他用途
     @RequestMapping("/captcha/{random}")
@@ -82,6 +106,7 @@ public class LoginServe {
         captcha.out(response.getOutputStream());
 
     }
+
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {
         String  captcha=(String)request.getSession().getAttribute("captcha");

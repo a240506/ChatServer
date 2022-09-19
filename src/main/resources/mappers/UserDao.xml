@@ -30,4 +30,15 @@
         where userName=#{userName} and password=#{password} and type=#{type}
         ]]>
 </select>
+
+    <insert id="insert" parameterType="com.example.chatserver.dao.UserDao">
+<![CDATA[
+        insert into user(
+                           userName ,password,type
+        )values(
+                   #{userName},#{password},#{type}
+               )
+        ]]>
+</insert>
+
 </mapper>
