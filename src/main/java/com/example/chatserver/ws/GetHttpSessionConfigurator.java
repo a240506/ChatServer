@@ -1,8 +1,10 @@
 package com.example.chatserver.ws;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
+import java.util.List;
 import java.util.Map;
 /*
 文件创建于  2022/09/20  23：11
@@ -16,10 +18,16 @@ public class GetHttpSessionConfigurator extends ServerEndpointConfig.Configurato
 
     @Override
     public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
+
         //获取httpsession对象
-        //HttpSession httpSession = (HttpSession) request.getHttpSession();
+        HttpSession httpSession = (HttpSession) request.getHttpSession();
+        //System.out.println(request.getParameterMap());
+        System.out.println(request.getHttpSession());
+        System.out.println(httpSession.getAttribute("userName"));
         //存放httpsession对象
         //Map<String, Object> userProperties = sec.getUserProperties();
         //userProperties.put(HttpSession.class.getName(), httpSession);
     }
+
+
 }
