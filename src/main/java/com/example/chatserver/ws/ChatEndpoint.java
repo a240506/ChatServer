@@ -37,28 +37,34 @@ public class ChatEndpoint {
     /**
      * 用来获取在登录成功后，放在httpsession域中存放的username
      */
-    //private HttpSession httpSession;
+    private HttpSession httpSession;
+    //用户名，唯一标识一个用户的
+    private String userName;
 
+    //TODO 考虑同一用户登录问题
+    //TODO 考虑用户没有登录问题
     /*建立时调用*/
     @OnOpen
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-        System.out.println("wbSocket建立连接onOpen！");
         this.session = session;
-        //获取httpsession域中存放的username对应的值
-
-        //String username = (String) httpSession.getAttribute("username");
-        //System.out.println(httpSession);
-        //System.out.println(httpSession.getAttribute("userName"));
-        String username="1111";
+        //获取httpsession对象
+        httpSession = (HttpSession) endpointConfig.getUserProperties().get(HttpSession.class.getName());
+        //获取用户名
+        userName = (String) httpSession.getAttribute("userName");
+        if(userName==null){
+            broadcastMsgToAllOnlineUsers("用户没有登录，请去登录");
+            return;
+        }
         //存放到onlineUsers中保存
-        onlineUsers.put(username, this);
+        onlineUsers.put(userName, this);
 
-        broadcastMsgToAllOnlineUsers(username);
+        System.out.println(userName+"上线");
+        broadcastMsgToAllOnlineUsers(userName+"上线");
     }
 
     /**
      * .
-     * @param message 给客户端发送消息
+     * @param message 给客所有户端发送消息
      * @return void
      */
     private void broadcastMsgToAllOnlineUsers(String message) {
@@ -80,10 +86,9 @@ public class ChatEndpoint {
     /**关闭时调用*/
     @OnClose
     public void onClose(Session session) {
-        //String username = (String) httpSession.getAttribute("username");
-        ////
-        //ChatEndpoint remove = onlineUsers.remove(username);
-        ////广播
-        //System.out.println(username+"下线");
+        //需要移除下线的用户
+        onlineUsers.remove(userName);
+        //广播
+        broadcastMsgToAllOnlineUsers(userName+"下线");
     }
 }

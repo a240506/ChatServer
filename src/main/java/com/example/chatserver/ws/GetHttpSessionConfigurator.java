@@ -18,15 +18,11 @@ public class GetHttpSessionConfigurator extends ServerEndpointConfig.Configurato
 
     @Override
     public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
-
-        //获取httpsession对象
+//获取httpsession对象
         HttpSession httpSession = (HttpSession) request.getHttpSession();
-        //System.out.println(request.getParameterMap());
-        System.out.println(request.getHttpSession());
-        System.out.println(httpSession.getAttribute("userName"));
         //存放httpsession对象
-        //Map<String, Object> userProperties = sec.getUserProperties();
-        //userProperties.put(HttpSession.class.getName(), httpSession);
+        Map<String, Object> userProperties = sec.getUserProperties();
+        userProperties.put(HttpSession.class.getName(), httpSession);
     }
 
 

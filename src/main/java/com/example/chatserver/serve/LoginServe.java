@@ -30,7 +30,7 @@ public class LoginServe {
     @Autowired
     private UserServiceImpl userService;
 
-
+    //登录
     @RequestMapping( value = "/login",method = RequestMethod.POST)
     public R login(HttpServletRequest request,@RequestBody LoginParam params){
         String  captcha=(String)request.getSession().getAttribute("captcha");
@@ -83,8 +83,16 @@ public class LoginServe {
         }
         return Tool.result(null,0,"注册失败");
     }
-
-
+    //判断是否登录过了
+    @RequestMapping( value = "/isLoggedIn",method = RequestMethod.GET)
+    public R isLoggedIn(HttpServletRequest request){
+        String  userName=(String)request.getSession().getAttribute("userName");
+        if(userName==null){
+            return Tool.result(false,200,"没有登录");
+        }else{
+            return Tool.result(true,200,userName+"登录了");
+        }
+    }
     //获取验证码
     //链接后的数字是随机数，保证不会被浏览器缓存，没有其他用途
     @RequestMapping("/captcha/{random}")
