@@ -41,7 +41,6 @@ public class ChatEndpoint {
     //用户名，唯一标识一个用户的
     private String userName;
 
-    //TODO 考虑同一用户登录问题
     //TODO 考虑用户没有登录问题
     /*建立时调用*/
     @OnOpen
@@ -55,10 +54,10 @@ public class ChatEndpoint {
             broadcastMsgToAllOnlineUsers("用户没有登录，请去登录");
             return;
         }
-        //chatEndpoint.session.close();
+        //检查用户是否存在,用户存在就强制下线
         checkUserExists(userName);
-
-
+        //重新保存下当前用户的用户名
+        httpSession.setAttribute("userName",userName);
         //存放到onlineUsers中保存
         onlineUsers.put(userName, this);
 
@@ -96,7 +95,23 @@ public class ChatEndpoint {
         //广播
         broadcastMsgToAllOnlineUsers(userName+"下线");
     }
-    //检查用户是否存在,用户存在就强制下线
+
+    /**
+     * 接收到客户端发送的数据时调用.
+     * @param message 客户端发送的数据
+     * @param session session对象
+     * @return void
+     */
+    @OnMessage
+    public void onMessage(String message, Session session) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(message);
+    }
+
+    /**
+     * 检查用户是否存在,用户存在就强制下线
+     * @param userName 用户名
+     */
     private void checkUserExists(String userName){
         ChatEndpoint chatEndpoint = onlineUsers.get(userName);
         if(chatEndpoint!=null){
