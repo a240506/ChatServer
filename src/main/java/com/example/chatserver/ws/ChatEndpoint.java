@@ -55,6 +55,10 @@ public class ChatEndpoint {
             broadcastMsgToAllOnlineUsers("用户没有登录，请去登录");
             return;
         }
+        //chatEndpoint.session.close();
+        checkUserExists(userName);
+
+
         //存放到onlineUsers中保存
         onlineUsers.put(userName, this);
 
@@ -73,6 +77,7 @@ public class ChatEndpoint {
 
         for (String name : names) {
             ChatEndpoint chatEndpoint = onlineUsers.get(name);
+
             //获取推送对象
             RemoteEndpoint.Basic basicRemote = chatEndpoint.session.getBasicRemote();
             try {
@@ -90,5 +95,26 @@ public class ChatEndpoint {
         onlineUsers.remove(userName);
         //广播
         broadcastMsgToAllOnlineUsers(userName+"下线");
+    }
+    //检查用户是否存在,用户存在就强制下线
+    private void checkUserExists(String userName){
+        ChatEndpoint chatEndpoint = onlineUsers.get(userName);
+        if(chatEndpoint!=null){
+        //    用户重复登录
+            //获取推送对象
+            RemoteEndpoint.Basic basicRemote = chatEndpoint.session.getBasicRemote();
+            try {
+                System.out.println(userName+"被挤占下线");
+                basicRemote.sendText("你已经被挤占下线");
+                //删除下线的用户名
+                chatEndpoint.httpSession.setAttribute("userName",null);
+                chatEndpoint.session.getBasicRemote();
+                chatEndpoint.session.close();
+                onlineUsers.remove(userName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

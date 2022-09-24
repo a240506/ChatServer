@@ -52,8 +52,6 @@ public class LoginServe {
             //保存名字
             request.getSession().setAttribute("userName",params.getUserName());
             String  userName=(String)request.getSession().getAttribute("userName");
-
-            System.out.println(userName);
         //    登录成功
             return Tool.result(user,200,"登录成功");
         }
