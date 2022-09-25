@@ -74,6 +74,8 @@ public class LoginServe {
         user.setUserName(params.getUserName());
         user.setPassword(params.getPassword());
         user.setType(params.getType());
+        //TODO 头像地址设置，目前没有搞
+        user.setAvatarUrl("@/assets/image/logo.png");
 
         long l= userService.userRegister(user);
         if(l==1){
@@ -120,11 +122,14 @@ public class LoginServe {
 
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {
-        String  captcha=(String)request.getSession().getAttribute("userName");
-        System.out.println(captcha);
 
-        return captcha;
+        //String  captcha=(String)request.getSession().getAttribute("userName");
+        //System.out.println(captcha);
+
+        return userService.loadByName("test2").toString();
     }
+
+
 
 
 }

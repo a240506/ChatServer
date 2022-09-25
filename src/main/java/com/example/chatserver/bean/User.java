@@ -4,10 +4,8 @@ package com.example.chatserver.bean;
 文件创建于  2022/09/17  15：32
 */
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+
 //自动实现Equals和HashCode方法
 @EqualsAndHashCode
 //自动实现ToString方法
@@ -21,4 +19,5 @@ public class User {
     private String userName;
     private String password;
     private String type;
+    private String avatarUrl;
 }

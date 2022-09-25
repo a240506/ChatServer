@@ -34,9 +34,9 @@
     <insert id="insert" parameterType="com.example.chatserver.dao.UserDao">
 <![CDATA[
         insert into user(
-                           userName ,password,type
+                           userName ,password,type,avatarUrl
         )values(
-                   #{userName},#{password},#{type}
+                   #{userName},#{password},#{type},#{avatarUrl}
                )
         ]]>
 </insert>
