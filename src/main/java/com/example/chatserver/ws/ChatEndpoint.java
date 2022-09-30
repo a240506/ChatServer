@@ -26,8 +26,22 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint(value = "/chat", configurator = GetHttpSessionConfigurator.class)
 @Component
 public class ChatEndpoint {
+    /**
+     * @Autowired
+     * private UserServiceImpl userService;
+     * Spring管理采用单例模式（singleton），而 WebSocket 是多对象的，即每个客户端对应后台的一个 WebSocket 对象，也可以理解成 new 了一个 WebSocket，这样当然是不能获得自动注入的对象了，因为这两者刚好冲突。
+     * @Autowired 注解注入对象操作是在启动时执行的，而不是在使用时，而 WebSocket 是只有连接使用时才实例化对象，且有多个连接就有多个对象。
+     * 所以我们可以得出结论，这个 Service 根本就没有注入到 WebSocket 当中。
+     *
+     * 将需要注入的 Service 改为静态，让它属于当前类，然后通过 setter 方法进行注入即可解决。
+     * 注意 setter 方法上不能有 static 关键字
+     */
+
+    private static UserServiceImpl userService;
     @Autowired
-    private UserServiceImpl userService;
+    public void setUserService(UserServiceImpl userService) {
+        ChatEndpoint.userService = userService;
+    }
 
     private final static Logger LOGGER = LogManager.getLogger(ChatEndpoint.class);
 
@@ -66,6 +80,7 @@ public class ChatEndpoint {
 
         broadcastMsgToAllOnlineUsers(userName+"上线","success");
         LOGGER.info(userName+"上线");
+
     }
 
     /**
@@ -173,17 +188,17 @@ public class ChatEndpoint {
     //获取所有在线用户信息
     private Map<String,Object> getOnlineUsersInfo(){
 
-        System.out.println(userService);
+        //System.out.println(userService);
         //所有登录用户名称
-        //Set<String> names = onlineUsers.keySet();
-        //List<User> OnlineUsers=new ArrayList<>();
-        //for (String name : names){
-        //    //User user=userService.loadByName(name);
-        //    System.out.println(userService);
-        //    //OnlineUsers.add(user);
-        //}
+        Set<String> names = onlineUsers.keySet();
+        List<User> OnlineUsers=new ArrayList<>();
+        for (String name : names){
+            User user=userService.loadByName(name);
+            //System.out.println(userService);
+            OnlineUsers.add(user);
+        }
         Map<String,Object> map=new HashMap<>();
-        map.put("data","OnlineUsers");
+        map.put("data",OnlineUsers);
         return map;
     }
 
