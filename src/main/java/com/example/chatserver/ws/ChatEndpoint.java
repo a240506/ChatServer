@@ -3,6 +3,7 @@ package com.example.chatserver.ws;
 import com.example.chatserver.bean.User;
 import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.SocketMessage;
+import com.example.chatserver.vo.UserInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
@@ -65,7 +66,7 @@ public class ChatEndpoint {
     //TODO 考虑用户没有登录问题
     /*建立时调用*/
     @OnOpen
-    public void onOpen(Session session, EndpointConfig endpointConfig) {
+    public void onOpen(Session session, EndpointConfig endpointConfig) throws JsonProcessingException {
         this.session = session;
         //获取httpsession对象
         httpSession = (HttpSession) endpointConfig.getUserProperties().get(HttpSession.class.getName());
@@ -78,22 +79,40 @@ public class ChatEndpoint {
         //存放到onlineUsers中保存
         onlineUsers.put(userName, this);
 
-        broadcastMsgToAllOnlineUsers(userName+"上线","success");
+        broadcastSystemMessage(userName+"上线","success");
+        System.out.println(getOnlineUsersInfo().toString());
+        //群发当前所有在线用户信息
+        //SocketMessage socketMessage=new SocketMessage("getOnlineUsersInfo",getOnlineUsersInfo());
+        //this.send(socketMessage.toJSONString());
+        sendMessage(getOnlineUsersInfo(),"getOnlineUsersInfo");
         LOGGER.info(userName+"上线");
 
     }
 
     /**
-     * @param message 给客所有户端发送消息
+     * @param message 广播系统消息
      * @return void
      */
-    private void broadcastMsgToAllOnlineUsers(String message,String type) {
+    private void broadcastSystemMessage(String message,String type) {
         //所有登录用户名称
         Set<String> names = onlineUsers.keySet();
 
         for (String name : names) {
             ChatEndpoint chatEndpoint = onlineUsers.get(name);
             chatEndpoint.sendSystemMessage(message,type);
+        }
+    }
+
+    /**
+     * 广播消息
+     * @param message
+     * @param event
+     */
+    private void broadcastMessage(String message,String event) {
+        Set<String> names = onlineUsers.keySet();
+        for (String name : names) {
+            ChatEndpoint chatEndpoint = onlineUsers.get(name);
+            chatEndpoint.sendMessage(message,event);
 
         }
     }
@@ -104,7 +123,7 @@ public class ChatEndpoint {
         onlineUsers.remove(userName);
         LOGGER.info(userName+"下线");
         //广播
-        broadcastMsgToAllOnlineUsers(userName+"下线","error");
+        broadcastSystemMessage(userName+"下线","error");
     }
 
     /**
@@ -129,13 +148,13 @@ public class ChatEndpoint {
         // TODO 这里可以用反射来改造，会少很多代码，也会好使用
         if(event.equals("getOnlineUsersInfo")){
             resMsg.setEvent("getOnlineUsersInfo");
-            resMsg.setData(getOnlineUsersInfo());
+            resMsg.setMapData(getOnlineUsersInfo());
         }else{
             //这里没有什么事件就发送什么事件，也可以 发 error 事件
             resMsg.setEvent(event);
             Map<String,Object> map=new HashMap<>();
             map.put("msg","错误，服务器没有接受这个事件的方法");
-            resMsg.setData(map);
+            resMsg.setMapData(map);
         }
         //发送数据
         this.send(resMsg.toJSONString());
@@ -155,8 +174,8 @@ public class ChatEndpoint {
             try {
                 LOGGER.info(userName+"被挤占下线");
                 SocketMessage socketMessage=new SocketMessage("system",new HashMap<>());
-                socketMessage.getData().put("message","你已经被挤占下线");
-                socketMessage.getData().put("type","error");
+                socketMessage.getMapData().put("message","你已经被挤占下线");
+                socketMessage.getMapData().put("type","error");
                 basicRemote.sendText(socketMessage.toJSONString());
                 //删除下线的用户名
                 chatEndpoint.httpSession.setAttribute("userName",null);
@@ -185,17 +204,22 @@ public class ChatEndpoint {
         }
     }
 
-    //获取所有在线用户信息
+    /**
+     * 获取所有在线用户信息
+     * @return
+     */
     private Map<String,Object> getOnlineUsersInfo(){
 
         //System.out.println(userService);
         //所有登录用户名称
         Set<String> names = onlineUsers.keySet();
-        List<User> OnlineUsers=new ArrayList<>();
+        List<UserInfo> OnlineUsers=new ArrayList<>();
         for (String name : names){
+            //查出用户的所有信息
             User user=userService.loadByName(name);
-            //System.out.println(userService);
-            OnlineUsers.add(user);
+            UserInfo userInfo=new UserInfo(user);
+            userInfo.setLastChat("最后的聊天记录还没写");
+            OnlineUsers.add(userInfo);
         }
         Map<String,Object> map=new HashMap<>();
         map.put("data",OnlineUsers);
@@ -203,14 +227,33 @@ public class ChatEndpoint {
     }
 
     /**
-     * 发送系统消息
+     * 发送系统消息，注意这个函数会自动打上event：system
      * @param message
      * @param type 'success' | 'warning' | 'info' | 'error'
      */
     private void sendSystemMessage(String message,String type){
         SocketMessage socketMessage=new SocketMessage("system",new HashMap<>());
-        socketMessage.getData().put("message",message);
-        socketMessage.getData().put("type",type);
+        socketMessage.getMapData().put("message",message);
+        socketMessage.getMapData().put("type",type);
+        this.send(socketMessage.toJSONString());
+    }
+
+    /**
+     * 发送消息
+     * @param message
+     * @param event
+     */
+    private void sendMessage(String message,String event){
+        SocketMessage socketMessage=new SocketMessage(event,message);
+        this.send(socketMessage.toJSONString());
+    }
+    /**
+     * 发送消息 (方法重载下)
+     * @param message
+     * @param event
+     */
+    private void sendMessage(Map<String,Object> message,String event){
+        SocketMessage socketMessage=new SocketMessage(event,message);
         this.send(socketMessage.toJSONString());
     }
 }
