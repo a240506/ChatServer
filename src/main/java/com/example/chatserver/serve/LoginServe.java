@@ -120,6 +120,21 @@ public class LoginServe {
 
     }
 
+    /**
+     * 获取当前用户的信息
+     * @param request
+     * @return
+     */
+    @RequestMapping( value = "/grtUserInfo",method = RequestMethod.GET)
+    public R grtUserInfo(HttpServletRequest request){
+        String  userName=(String)request.getSession().getAttribute("userName");
+        Map<String,Object> data=new HashMap<>();
+        //TODO 这里还要加点用户信息
+        data.put("userName",userName);
+
+
+        return Tool.result(data,200,userName+"获取当前用户的信息成功");
+    }
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {
 
