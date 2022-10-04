@@ -12,27 +12,27 @@ import org.springframework.stereotype.Service;
 @Service("userService")
 public class UserServiceImpl {
     @Autowired
-    private UserDao UserDao;
+    private UserDao userDao;
 
     public User loadByName(String name) {
-        return UserDao.loadByName(name);
+        return userDao.loadByName(name);
     }
     //用户登录
     public User userLogin(String username,  String password) {
-        return UserDao.login(username,password,"user");
+        return userDao.login(username,password,"user");
     }
     //管理员登录
     public User adminLogin(String username,  String password) {
-        return UserDao.login(username,password,"admin");
+        return userDao.login(username,password,"admin");
     }
     //用户注册
     public Long userRegister(User bean) {
         bean.setType("user");
-        return UserDao.insert(bean);
+        return userDao.insert(bean);
     }
     //管理员注册
     public Long adminRegister(User bean) {
         bean.setType("admin");
-        return UserDao.insert(bean);
+        return userDao.insert(bean);
     }
 }

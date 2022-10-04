@@ -1,6 +1,8 @@
 package com.example.chatserver.ws;
 
+import com.example.chatserver.bean.News;
 import com.example.chatserver.bean.User;
+import com.example.chatserver.common.Tool;
 import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.SocketMessage;
 import com.example.chatserver.vo.UserInfo;
@@ -80,7 +82,6 @@ public class ChatEndpoint {
         onlineUsers.put(userName, this);
 
         broadcastSystemMessage(userName+"上线","success");
-        System.out.println(getOnlineUsersInfo().toString());
         //群发当前所有在线用户信息
         //SocketMessage socketMessage=new SocketMessage("getOnlineUsersInfo",getOnlineUsersInfo());
         //this.send(socketMessage.toJSONString());
@@ -149,6 +150,9 @@ public class ChatEndpoint {
         if(event.equals("getOnlineUsersInfo")){
             resMsg.setEvent("getOnlineUsersInfo");
             resMsg.setMapData(getOnlineUsersInfo());
+        }else if(event.equals("newsInsert")){
+            resMsg.setEvent("newsInsert");
+            newsInsert(msg.getData());
         }else{
             //这里没有什么事件就发送什么事件，也可以 发 error 事件
             resMsg.setEvent(event);
@@ -255,5 +259,16 @@ public class ChatEndpoint {
     private void sendMessage(Map<String,Object> message,String event){
         SocketMessage socketMessage=new SocketMessage(event,message);
         this.send(socketMessage.toJSONString());
+    }
+
+    /**
+     * 新消息插入
+     * @param map
+     */
+    private Boolean newsInsert(Map<String,Object> map){
+        News news=Tool.mapToBean(map,News.class);
+        //JSONObject jsonObject = new JSONObject();
+        System.out.println(news);
+        return false;
     }
 }

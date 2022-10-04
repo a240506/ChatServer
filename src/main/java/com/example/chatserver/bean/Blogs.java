@@ -21,7 +21,7 @@ public class Blogs {
     private String desc;
     private Long authorId;
     private String title;
-    private Time createDate;
-    private Time updateDate;
+    private String createDate;
+    private String updateDate;
     private String authorName;
 }

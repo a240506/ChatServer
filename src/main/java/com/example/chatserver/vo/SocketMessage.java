@@ -26,7 +26,7 @@ public class SocketMessage {
     private String event;
     private Map<String,Object> mapData;
     private String stringData;
-
+    private Map<String,Object> data;
     public SocketMessage(String event,Map<String,Object> kvHashMap){
         this.event=event;
         this.mapData=kvHashMap;

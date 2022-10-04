@@ -125,15 +125,14 @@ public class LoginServe {
      * @param request
      * @return
      */
-    @RequestMapping( value = "/grtUserInfo",method = RequestMethod.GET)
+    @RequestMapping( value = "/getUserInfo",method = RequestMethod.GET)
     public R grtUserInfo(HttpServletRequest request){
         String  userName=(String)request.getSession().getAttribute("userName");
-        Map<String,Object> data=new HashMap<>();
-        //TODO 这里还要加点用户信息
-        data.put("userName",userName);
-
-
-        return Tool.result(data,200,userName+"获取当前用户的信息成功");
+        User user= userService.loadByName(userName);
+        if(user==null){
+            return Tool.result(null,0,"获取用户信息失败");
+        }
+        return Tool.result(user,200,"获取用户信息成功");
     }
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {

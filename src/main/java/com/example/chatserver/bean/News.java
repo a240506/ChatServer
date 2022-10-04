@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 
 /*
 文件创建于  2022/10/03  23：23
@@ -19,7 +20,7 @@ public class News {
     private Long senderId;
     private String senderName;
     private String senderAvatar;
-    private Time time;
+    private String time;
     private Long sentId;
     private String sentName;
     private String message;
