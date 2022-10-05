@@ -22,4 +22,11 @@
         ]]>
 </insert>
 
+    <select id="newsBySenderIdAndSentId" resultType="com.example.chatserver.bean.News">
+<![CDATA[
+        select *
+        from news
+        where (senderId=#{senderId} and sentId=#{sentId}) or (senderId=#{sentId} and sentId=#{senderId})
+        ]]>
+</select>
 </mapper>

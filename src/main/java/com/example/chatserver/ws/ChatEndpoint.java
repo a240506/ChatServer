@@ -154,16 +154,17 @@ public class ChatEndpoint {
         SocketMessage resMsg=new SocketMessage();
         String event=msg.getEvent();
 
+        resMsg.setEvent(event);
         // TODO 这里可以用反射来改造，会少很多代码，也会好使用
         if(event.equals("getOnlineUsersInfo")){
-            resMsg.setEvent("getOnlineUsersInfo");
             resMsg.setMapData(getOnlineUsersInfo());
         }else if(event.equals("newsInsert")){
-            resMsg.setEvent("newsInsert");
-            newsInsert(msg.getData());
+            //插入新消息
+            resMsg.setStringData(newsInsert(msg.getData()).toString());
+
         }else{
             //这里没有什么事件就发送什么事件，也可以 发 error 事件
-            resMsg.setEvent(event);
+
             Map<String,Object> map=new HashMap<>();
             map.put("msg","错误，服务器没有接受这个事件的方法");
             resMsg.setMapData(map);
@@ -270,21 +271,43 @@ public class ChatEndpoint {
     }
 
     /**
+     * 发送消息,根据用户名从在线用户中找到并发送
+     * @param userName
+     * @param message
+     * @param event
+     */
+    private Boolean sendMessageByUserName(String userName,Map<String,Object> message,String event){
+        ChatEndpoint chatEndpoint=this.onlineUsers.get(userName);
+        if(chatEndpoint!=null){
+            chatEndpoint.sendMessage(message,event);
+            return true;
+        }
+        return false;
+    }
+    /**
      * 新消息插入
      * @param map
      */
     private Boolean newsInsert(Map<String,Object> map){
-        News news=(News)Tool.MapToObject(map,News.class);
-
         //设置消息发送的时间
         Timestamp time= new Timestamp(System.currentTimeMillis());//获取系统当前时间
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String timeStr = df.format(time);
         time = Timestamp.valueOf(timeStr);
-        news.setTime(time.toString());
+        map.put("time",time.toString());
 
-        newsService.insert(news);
+        News news=(News)Tool.MapToObject(map,News.class);
+        long r= newsService.insert(news);
 
-        return true;
+
+        if(r==1l){
+            //这里 推送到对方 必须在插入对话后，不然会导致 调用 getNewsBySenderIdAndSentId 获取不到新插入的对话
+            //推送到对方
+            sendMessageByUserName(news.getSentName(),map,"news");
+            //this.sendSystemMessage("成功，服务器服务器成功插入了对话","success");
+            return true;
+        }
+        //this.sendSystemMessage("错误，服务器服务器插入失败","error");
+        return false;
     }
 }
