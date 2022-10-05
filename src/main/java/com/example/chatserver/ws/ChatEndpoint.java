@@ -3,6 +3,7 @@ package com.example.chatserver.ws;
 import com.example.chatserver.bean.News;
 import com.example.chatserver.bean.User;
 import com.example.chatserver.common.Tool;
+import com.example.chatserver.service.impl.NewsServiceImpl;
 import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.SocketMessage;
 import com.example.chatserver.vo.UserInfo;
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,6 +47,12 @@ public class ChatEndpoint {
     @Autowired
     public void setUserService(UserServiceImpl userService) {
         ChatEndpoint.userService = userService;
+    }
+
+    private static NewsServiceImpl newsService;
+    @Autowired
+    public void setNewsService(NewsServiceImpl newsService) {
+        ChatEndpoint.newsService = newsService;
     }
 
     private final static Logger LOGGER = LogManager.getLogger(ChatEndpoint.class);
@@ -130,11 +139,10 @@ public class ChatEndpoint {
     /**
      * 接收到客户端发送的数据时调用.
      * @param message 客户端发送的数据
-     * @param session session对象
-     * @return void
      */
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String message) {
+        //System.out.println(message);
         ObjectMapper objectMapper = new ObjectMapper();
         SocketMessage msg= null;
         try {
@@ -266,9 +274,17 @@ public class ChatEndpoint {
      * @param map
      */
     private Boolean newsInsert(Map<String,Object> map){
-        News news=Tool.mapToBean(map,News.class);
-        //JSONObject jsonObject = new JSONObject();
-        System.out.println(news);
-        return false;
+        News news=(News)Tool.MapToObject(map,News.class);
+
+        //设置消息发送的时间
+        Timestamp time= new Timestamp(System.currentTimeMillis());//获取系统当前时间
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String timeStr = df.format(time);
+        time = Timestamp.valueOf(timeStr);
+        news.setTime(time.toString());
+
+        newsService.insert(news);
+
+        return true;
     }
 }

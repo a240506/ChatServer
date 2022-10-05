@@ -17,11 +17,12 @@ import java.sql.Timestamp;
 @Data
 public class News {
     private Long _id;
-    private Long senderId;
+    //这里写Long 类型会导致Tool的MapToObject 转换错误
+    private int senderId;
     private String senderName;
     private String senderAvatar;
     private String time;
-    private Long sentId;
+    private int sentId;
     private String sentName;
     private String message;
     private String messageType;
