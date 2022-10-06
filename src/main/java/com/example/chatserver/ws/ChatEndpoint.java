@@ -289,6 +289,7 @@ public class ChatEndpoint {
      * @param map
      */
     private Boolean newsInsert(Map<String,Object> map){
+
         //设置消息发送的时间
         Timestamp time= new Timestamp(System.currentTimeMillis());//获取系统当前时间
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -297,6 +298,9 @@ public class ChatEndpoint {
         map.put("time",time.toString());
 
         News news=(News)Tool.MapToObject(map,News.class);
+
+        //System.out.println(news.getMessage());
+        //long r= 0;
         long r= newsService.insert(news);
 
 
