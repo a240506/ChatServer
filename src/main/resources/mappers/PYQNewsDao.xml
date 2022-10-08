@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.chatserver.dao.PYQNewsDao">
+    <insert id="insert" parameterType="com.example.chatserver.dao.PYQNewsDao">
+<![CDATA[
+        insert into pyqnews(
+             userId,userName,avatarUrl,content ,createDate
+        )values(
+                #{userId},#{userName},#{avatarUrl},#{content},#{createDate}
+               )
+        ]]>
+</insert>
+    <select id="getPYQByName" parameterType="java.lang.String"
+            resultType="com.example.chatserver.bean.PYQNews">
+<![CDATA[
+        select *
+        from pyqnews
+        where userName=#{name}
+        ]]>
+</select>
+</mapper>
