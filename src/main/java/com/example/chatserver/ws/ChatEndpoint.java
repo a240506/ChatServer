@@ -161,7 +161,8 @@ public class ChatEndpoint {
         }else if(event.equals("newsInsert")){
             //插入新消息
             resMsg.setStringData(newsInsert(msg.getData()).toString());
-
+        }else if(event.equals("imageNewsInsert")){
+            resMsg.setStringData(imageNewsInsert(msg.getData()).toString());
         }else{
             //这里没有什么事件就发送什么事件，也可以 发 error 事件
 
@@ -302,8 +303,6 @@ public class ChatEndpoint {
         //System.out.println(news.getMessage());
         //long r= 0;
         long r= newsService.insert(news);
-
-
         if(r==1l){
             //这里 推送到对方 必须在插入对话后，不然会导致 调用 getNewsBySenderIdAndSentId 获取不到新插入的对话
             //推送到对方
@@ -312,6 +311,46 @@ public class ChatEndpoint {
             return true;
         }
         //this.sendSystemMessage("错误，服务器服务器插入失败","error");
+        return false;
+    }
+
+    /**
+     * 插入图片消息   (文件插入也用这个)
+     * @param map
+     * @return
+     */
+    private Boolean imageNewsInsert(Map<String,Object> map){
+        //设置消息发送的时间
+        Timestamp time= new Timestamp(System.currentTimeMillis());//获取系统当前时间
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String timeStr = df.format(time);
+        time = Timestamp.valueOf(timeStr);
+        map.put("time",time.toString());
+        News news=(News)Tool.MapToObject(map,News.class);
+        String physicalPath=news.getMessage();
+        String fileName= physicalPath.substring(physicalPath.lastIndexOf("\\")+1);
+
+        //移动图片
+        if(news.getMessageType().equals("file")){
+            if(Tool.moveFileToTarget(news.getMessage(),"D:\\迅雷下载\\my-chat项目图片文件夹\\file\\"+fileName)){
+                news.setMessage("http://localhost:19091/static/file/"+fileName);
+                long r= newsService.insert(news);
+                if(r==1l){
+                    sendMessageByUserName(news.getSentName(),map,"news");
+                    return true;
+                }
+            }
+        }//移动图片
+        else{
+            if(Tool.moveFileToTarget(news.getMessage(),"D:\\迅雷下载\\my-chat项目图片文件夹\\images\\"+fileName)){
+                news.setMessage("http://localhost:19091/static/images/"+fileName);
+                long r= newsService.insert(news);
+                if(r==1l){
+                    sendMessageByUserName(news.getSentName(),map,"news");
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }

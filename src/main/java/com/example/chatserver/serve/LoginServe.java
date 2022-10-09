@@ -11,13 +11,16 @@ import com.wf.captcha.GifCaptcha;
 import com.wf.captcha.SpecCaptcha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -134,6 +137,40 @@ public class LoginServe {
         }
         return Tool.result(user,200,"获取用户信息成功");
     }
+
+    @ResponseBody
+    @RequestMapping("/file/upload")
+    protected  Map<String,Object> loginDeal(@RequestParam("file") MultipartFile fileUpload){
+        //这里应该判断文件大小的
+        String type = fileUpload.getOriginalFilename().substring(fileUpload.getOriginalFilename().lastIndexOf("."));
+        //设置随机的文件名字
+        String fileName=Tool.getTimeString()+"_"+(new Random()).nextInt(1000000)+type;
+        //文件先保存到临时文件夹中
+        //TODO 临时文件应该定时删除，一个文件60分钟
+        String tmpFilePath =  "D:\\迅雷下载\\my-chat项目图片文件夹\\temp"  ;
+
+        //没有路径就创建路径
+        File tmp = new File(tmpFilePath);
+        if (!tmp.exists()) {
+            tmp.mkdirs();
+        }
+        String resourcesPath = tmpFilePath + "\\" + fileName;
+
+        File upFile = new File(resourcesPath);
+        try {
+            fileUpload.transferTo(upFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Map<String,Object> map=new HashMap<>();
+        map.put("imageUrl","http://localhost:19091/static/temp/"+fileName);
+        map.put("physicalPath",resourcesPath);
+        map.put("originalFileName",fileUpload.getOriginalFilename());
+        return map;
+    }
+
+
+
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {
 
