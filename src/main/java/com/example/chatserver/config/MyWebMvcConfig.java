@@ -23,7 +23,7 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                 .maxAge(1800)
                 // 后端必须添加这个才可以前跨域不丢失cookie ，服务器session才可以使用
                 //还必须指定请求域名，不可以用 *
-                .allowedOrigins("http://localhost:8080/").allowCredentials(true);
+                .allowedOrigins("http://localhost:8081/").allowCredentials(true);
     }
 
     //加这个才可以 开启 WebSocket

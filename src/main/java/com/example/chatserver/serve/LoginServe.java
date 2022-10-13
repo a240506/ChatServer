@@ -141,10 +141,10 @@ public class LoginServe {
     @ResponseBody
     @RequestMapping("/file/upload")
     protected  Map<String,Object> loginDeal(@RequestParam("file") MultipartFile fileUpload){
-        //这里应该判断文件大小的
-        String type = fileUpload.getOriginalFilename().substring(fileUpload.getOriginalFilename().lastIndexOf("."));
+        //TODO 这里应该判断文件大小的
+        //String type = fileUpload.getOriginalFilename().substring(fileUpload.getOriginalFilename().lastIndexOf("."));
         //设置随机的文件名字
-        String fileName=Tool.getTimeString()+"_"+(new Random()).nextInt(1000000)+type;
+        String fileName=Tool.getTimeString()+"_"+(new Random()).nextInt(1000000)+"_"+fileUpload.getOriginalFilename();
         //文件先保存到临时文件夹中
         //TODO 临时文件应该定时删除，一个文件60分钟
         String tmpFilePath =  "D:\\迅雷下载\\my-chat项目图片文件夹\\temp"  ;
@@ -169,7 +169,14 @@ public class LoginServe {
         return map;
     }
 
+    @RequestMapping("/user/update")
+    protected Boolean userUpdate(@RequestBody User user){
+        if(1L==userService.update(user)){
+            return true;
+        }
 
+        return false;
+    }
 
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {
@@ -179,6 +186,8 @@ public class LoginServe {
 
         return userService.loadByName("test2").toString();
     }
+
+
 
 
 

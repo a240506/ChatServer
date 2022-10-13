@@ -41,4 +41,13 @@
         ]]>
 </insert>
 
+    <update id="update" parameterType="com.example.chatserver.bean.User">
+<![CDATA[
+        update user set password=#{password},type=#{type},avatarUrl=#{avatarUrl},nickname=#{nickname},
+                        email=#{email},province=#{province},city=#{city},town=#{town},sex=#{sex},
+                        bgImage=#{bgImage},signUpTime=#{signUpTime},age=#{age},lastLoginTime=#{lastLoginTime},friendFenzu=#{friendFenzu},
+                        onlineTime=#{onlineTime} where userId=#{userId}
+        ]]>
+    </update>
+
 </mapper>

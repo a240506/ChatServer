@@ -90,6 +90,10 @@ public class ChatEndpoint {
         //存放到onlineUsers中保存
         onlineUsers.put(userName, this);
 
+        System.out.println(userName);
+
+        //getTimeString
+
         broadcastSystemMessage(userName+"上线","success");
         //群发当前所有在线用户信息
         //SocketMessage socketMessage=new SocketMessage("getOnlineUsersInfo",getOnlineUsersInfo());
@@ -129,6 +133,9 @@ public class ChatEndpoint {
     /**关闭时调用*/
     @OnClose
     public void onClose(Session session) {
+        //更新用户最后登录时间
+        userService.updateLastLoginTime(userName);
+
         //需要移除下线的用户
         onlineUsers.remove(userName);
         LOGGER.info(userName+"下线");

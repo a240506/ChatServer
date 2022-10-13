@@ -70,6 +70,12 @@ public class Tool {
 
         return simpleDateFormat.format(new Date()).toString();
     }
+    public static String getTimeString(String format){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));//设置北京时间
+
+        return simpleDateFormat.format(new Date()).toString();
+    }
     /**
      * 	移动文件到指定位置
      * @param fileFullNameCurrent 要移动的文件全路径

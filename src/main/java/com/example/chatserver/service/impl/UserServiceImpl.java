@@ -1,6 +1,7 @@
 package com.example.chatserver.service.impl;
 
 import com.example.chatserver.bean.User;
+import com.example.chatserver.common.Tool;
 import com.example.chatserver.dao.UserDao;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +36,20 @@ public class UserServiceImpl {
         bean.setType("admin");
         return userDao.insert(bean);
     }
+
+    /**
+     * 用户信息更新
+     * @param bean
+     * @return
+     */
+    public Long update(User bean){
+        return userDao.update(bean);
+    }
+
+    public Long updateLastLoginTime(String userName){
+        User user= userDao.loadByName(userName);
+        user.setLastLoginTime(Tool.getTimeString("yyyy-MM-dd HH:mm:ss"));
+        return update(user);
+    }
+
 }
