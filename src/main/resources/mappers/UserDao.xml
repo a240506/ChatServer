@@ -49,5 +49,14 @@
                         onlineTime=#{onlineTime} where userId=#{userId}
         ]]>
     </update>
+    <!--where userName LIKE '%${name}%'-->
+    <select id="loadLikeName" parameterType="java.lang.String"
+            resultType="com.example.chatserver.bean.User">
+<![CDATA[
+        select *
+        from user
+        where userName LIKE #{name}
+        ]]>
+</select>
 
 </mapper>

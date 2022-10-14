@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /*
 文件创建于  2022/09/17  16：26
 */
@@ -46,10 +48,22 @@ public class UserServiceImpl {
         return userDao.update(bean);
     }
 
+    /**
+     * 最后登录时间更新
+     * @param userName
+     * @return
+     */
     public Long updateLastLoginTime(String userName){
         User user= userDao.loadByName(userName);
         user.setLastLoginTime(Tool.getTimeString("yyyy-MM-dd HH:mm:ss"));
         return update(user);
     }
+
+
+    public List<User> loadLikeName(String userName){
+        return userDao.loadLikeName(userName);
+    }
+
+
 
 }

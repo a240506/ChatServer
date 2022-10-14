@@ -29,4 +29,8 @@
         where (senderId=#{senderId} and sentId=#{sentId}) or (senderId=#{sentId} and sentId=#{senderId})
         ]]>
 </select>
+
+
+
+
 </mapper>

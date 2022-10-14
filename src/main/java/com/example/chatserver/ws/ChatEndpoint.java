@@ -90,8 +90,6 @@ public class ChatEndpoint {
         //存放到onlineUsers中保存
         onlineUsers.put(userName, this);
 
-        System.out.println(userName);
-
         //getTimeString
 
         broadcastSystemMessage(userName+"上线","success");
@@ -160,8 +158,11 @@ public class ChatEndpoint {
         }
         SocketMessage resMsg=new SocketMessage();
         String event=msg.getEvent();
-
         resMsg.setEvent(event);
+        //截取 key key是唯一的标识
+        if(event.indexOf("-")!=-1){
+            event=event.substring(0,event.indexOf("-"));
+        }
         // TODO 这里可以用反射来改造，会少很多代码，也会好使用
         if(event.equals("getOnlineUsersInfo")){
             resMsg.setMapData(getOnlineUsersInfo());
@@ -170,9 +171,12 @@ public class ChatEndpoint {
             resMsg.setStringData(newsInsert(msg.getData()).toString());
         }else if(event.equals("imageNewsInsert")){
             resMsg.setStringData(imageNewsInsert(msg.getData()).toString());
-        }else{
+        }else if(event.equals("isUserOnline")){
+            resMsg.setStringData(isUserOnline(msg.getData()).toString());
+        }
+        else{
             //这里没有什么事件就发送什么事件，也可以 发 error 事件
-
+            LOGGER.warn("错误，服务器没有接受"+resMsg.getEvent()+"这个事件的方法");
             Map<String,Object> map=new HashMap<>();
             map.put("msg","错误，服务器没有接受这个事件的方法");
             resMsg.setMapData(map);
@@ -357,6 +361,19 @@ public class ChatEndpoint {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * 给用户名，判断用户是否在线
+     * @param map
+     * @return
+     */
+    private Boolean isUserOnline(Map<String,Object> map){
+        String userName=(String)map.get("userName");
+        if(onlineUsers.get(userName)!=null){
+            return true;
         }
         return false;
     }

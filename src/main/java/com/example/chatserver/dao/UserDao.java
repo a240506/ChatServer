@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /*
 文件创建于  2022/09/17  15：44
 */
@@ -13,4 +15,5 @@ import org.springframework.stereotype.Repository;
 public interface UserDao extends BaseDao<User>{
     User loadByName(String name);
     User login(@Param("userName") String username,@Param("password") String password,@Param("type") String type);
+    List<User> loadLikeName(String name);
 }

@@ -18,10 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -174,9 +171,21 @@ public class LoginServe {
         if(1L==userService.update(user)){
             return true;
         }
-
         return false;
     }
+
+    /**
+     * 用户搜索，根据用户民
+     * @param params
+     * @return
+     */
+    @RequestMapping("/user/search/userName")
+    protected List<User> userSearchUserName(@RequestBody Map<String, Object> params){
+        //TODO 应该把密码隐藏，感觉还有sql注入的漏洞
+        return userService.loadLikeName("%"+(String) params.get("search")+"%");
+    }
+
+
 
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {
