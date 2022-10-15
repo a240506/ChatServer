@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.chatserver.dao.FriendliesDao">
+    <insert id="insert" parameterType="com.example.chatserver.bean.Friendlies">
+<![CDATA[
+        insert into friendlies(
+            userX,userY
+        )values(
+                   #{userX},#{userY}
+               )
+        ]]>
+</insert>
+
+</mapper>

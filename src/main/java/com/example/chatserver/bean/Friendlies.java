@@ -5,6 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * 一条Friendlies表示一个好友关系
+ */
 /*
 文件创建于  2022/10/03  23：27
 */
@@ -15,5 +18,5 @@ import lombok.ToString;
 public class Friendlies {
     private Long _id;
     private Long userX;
-    private String userY;
+    private Long userY;
 }

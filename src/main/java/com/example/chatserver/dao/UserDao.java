@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public interface UserDao extends BaseDao<User>{
     User loadByName(String name);
+    User loadById(int id);
     User login(@Param("userName") String username,@Param("password") String password,@Param("type") String type);
     List<User> loadLikeName(String name);
 }

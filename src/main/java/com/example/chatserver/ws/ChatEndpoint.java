@@ -1,8 +1,11 @@
 package com.example.chatserver.ws;
 
+import com.example.chatserver.bean.AddMessage;
 import com.example.chatserver.bean.News;
 import com.example.chatserver.bean.User;
 import com.example.chatserver.common.Tool;
+import com.example.chatserver.common.enumType.add_message_type;
+import com.example.chatserver.service.impl.AddMessageServiceImpl;
 import com.example.chatserver.service.impl.NewsServiceImpl;
 import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.SocketMessage;
@@ -54,6 +57,13 @@ public class ChatEndpoint {
     public void setNewsService(NewsServiceImpl newsService) {
         ChatEndpoint.newsService = newsService;
     }
+
+    private static AddMessageServiceImpl addMessageService;
+    @Autowired
+    public void setAddMessageService(AddMessageServiceImpl addMessageService){
+        ChatEndpoint.addMessageService=addMessageService;
+    }
+
 
     private final static Logger LOGGER = LogManager.getLogger(ChatEndpoint.class);
 
@@ -173,6 +183,9 @@ public class ChatEndpoint {
             resMsg.setStringData(imageNewsInsert(msg.getData()).toString());
         }else if(event.equals("isUserOnline")){
             resMsg.setStringData(isUserOnline(msg.getData()).toString());
+        }else if(event.equals("addFriend")){
+            resMsg.setStringData(addFriend(msg.getData()).toString());
+            return;
         }
         else{
             //这里没有什么事件就发送什么事件，也可以 发 error 事件
@@ -377,4 +390,33 @@ public class ChatEndpoint {
         }
         return false;
     }
+
+    private Boolean addFriend(Map<String,Object> map){
+        // 枚举类型手动转换下
+        map.put("type",add_message_type.values()[(int)map.get("type")]);
+
+        AddMessage addMessage= (AddMessage)Tool.MapToObject(map, AddMessage.class);
+
+        //if(addMessageService.isMessageExist(addMessage)){
+        //    return false;
+        //}
+        if(addMessageService.insert(addMessage)==1l){
+            Map<String,Object> res=new HashMap<>();
+
+            User user= userService.loadById(addMessage.getUserY());
+            res.put("userY",user);
+            res.put("userX",userService.loadById(addMessage.getUserX()));
+            res.put("message",addMessage.getMessage());
+            res.put("type",addMessage.getType());
+            //这里要推送给对方
+            this.sendMessageByUserName(user.getUserName(),res,"addFriendMessage");
+            //System.out.println(user);
+
+            return true;
+        }
+
+        return false;
+    }
+
+
 }

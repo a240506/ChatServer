@@ -20,6 +20,9 @@ public class UserServiceImpl {
     public User loadByName(String name) {
         return userDao.loadByName(name);
     }
+    public User loadById(int id) {
+        return userDao.loadById(id);
+    }
     //用户登录
     public User userLogin(String username,  String password) {
         return userDao.login(username,password,"user");
@@ -63,6 +66,8 @@ public class UserServiceImpl {
     public List<User> loadLikeName(String userName){
         return userDao.loadLikeName(userName);
     }
+
+
 
 
 

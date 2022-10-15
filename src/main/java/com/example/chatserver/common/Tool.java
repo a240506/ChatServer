@@ -35,6 +35,13 @@ public class Tool {
 
 
     //Map转Object
+
+    /**
+     * Map转Object,enum类型不会转换
+     * @param map
+     * @param beanClass
+     * @return
+     */
     public static Object MapToObject(Map<String, Object> map, Class<?> beanClass) {
         if (map == null)
             return null;
@@ -49,12 +56,14 @@ public class Tool {
         Field[] fields = obj.getClass().getDeclaredFields();
         for (Field field : fields) {
             int mod = field.getModifiers();
+
             if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
                 continue;
             }
             field.setAccessible(true);
             if (map.containsKey(field.getName())) {
                 try {
+
                     field.set(obj, map.get(field.getName()));
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();

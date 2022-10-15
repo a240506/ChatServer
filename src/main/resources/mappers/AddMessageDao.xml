@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.chatserver.dao.AddMessageDao">
+    <insert id="insert" parameterType="com.example.chatserver.bean.AddMessage">
+<![CDATA[
+        insert into add_message(
+            userX,userY,type,message
+        )values(
+                   #{userX},#{userY},#{type},#{message}
+               )
+        ]]>
+</insert>
+    <!--AddMessageDaoByUserXdAndUserY-->
+    <select id="addMessageDaoByUserXdAndUserY" resultType="com.example.chatserver.bean.AddMessage">
+<![CDATA[
+        select *
+        from add_message
+        where (userX=#{userX} and userY=#{userY}) or (userX=#{userY} and userY=#{userX})
+        ]]>
+</select>
+
+    <select id="loadAddMessageByUserYAndType" resultType="com.example.chatserver.bean.AddMessage">
+<![CDATA[
+        select *
+        from add_message
+        where type=#{type} and userY=#{userY}
+        ]]>
+</select>
+</mapper>
