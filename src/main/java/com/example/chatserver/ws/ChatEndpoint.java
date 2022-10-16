@@ -397,9 +397,9 @@ public class ChatEndpoint {
 
         AddMessage addMessage= (AddMessage)Tool.MapToObject(map, AddMessage.class);
 
-        //if(addMessageService.isMessageExist(addMessage)){
-        //    return false;
-        //}
+        if(addMessageService.isMessageExist(addMessage)){
+            return false;
+        }
         if(addMessageService.insert(addMessage)==1l){
             Map<String,Object> res=new HashMap<>();
 

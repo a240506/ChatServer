@@ -28,4 +28,21 @@
         where type=#{type} and userY=#{userY}
         ]]>
 </select>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+<![CDATA[
+        delete from add_message
+        where _id=#{id}
+        ]]>
+</delete>
+
+    <select id="loadById" resultType="com.example.chatserver.bean.AddMessage">
+<![CDATA[
+        select *
+        from add_message
+        where _id=#{id}
+        ]]>
+</select>
+
+
 </mapper>

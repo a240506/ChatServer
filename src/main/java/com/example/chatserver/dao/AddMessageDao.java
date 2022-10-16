@@ -13,4 +13,6 @@ public interface AddMessageDao extends BaseDao<AddMessage>{
     List<AddMessage> addMessageDaoByUserXdAndUserY(AddMessage addMessage);
 
     List<AddMessage> loadAddMessageByUserYAndType(AddMessage addMessage);
+    Long delete(int id);
+    AddMessage loadById(int id);
 }

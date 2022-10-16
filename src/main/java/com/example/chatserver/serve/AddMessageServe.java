@@ -8,6 +8,7 @@ import com.example.chatserver.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class AddMessageServe {
     private AddMessageServiceImpl addMessageService;
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private FriendliesServiceImpl friendliesService;
 
     /**
      * 获取 UserY 的消息
@@ -32,7 +35,7 @@ public class AddMessageServe {
      * @return
      */
     @RequestMapping("/byUserYAndType")
-    public List<Object> friendliesInsert(@RequestBody AddMessage addMessage) {
+    public List<Object> byUserYAndType(@RequestBody AddMessage addMessage) {
         List<AddMessage> list=addMessageService.loadAddMessageByUserYAndType(addMessage);
         List<Object> res=new ArrayList<>();
         for(AddMessage item : list){
@@ -41,8 +44,31 @@ public class AddMessageServe {
             tmep.put("type",item.getType());
             tmep.put("message",item.getMessage());
             tmep.put("userY",userService.loadById(item.getUserY()));
+            tmep.put("_id",item.get_id());
             res.add(tmep);
         }
         return res;
     }
+
+    @RequestMapping("/delete")
+    public Boolean delete(@RequestBody Map<String, Object> params){
+        int id= (int) params.get("id");
+
+        return addMessageService.delete(id);
+    }
+
+    @RequestMapping("/consent")
+    public Boolean consent(@RequestBody Map<String, Object> params){
+        int id= (int) params.get("id");
+        AddMessage addMessage= addMessageService.loadById(id);
+        Friendlies friendlies=new Friendlies();
+        friendlies.setUserX(addMessage.getUserX());
+        friendlies.setUserY(addMessage.getUserY());
+        // TODO 这里没有判断是否已经存在关系
+        if(friendliesService.insert(friendlies)==1l){
+            return  addMessageService.delete(id);
+        }
+        return false;
+    }
+
 }

@@ -1,8 +1,10 @@
 package com.example.chatserver.serve;
 
+import com.example.chatserver.bean.Friendlies;
 import com.example.chatserver.bean.User;
 import com.example.chatserver.common.R;
 import com.example.chatserver.common.Tool;
+import com.example.chatserver.service.impl.FriendliesServiceImpl;
 import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.LoginParam;
 import com.wf.captcha.ArithmeticCaptcha;
@@ -29,7 +31,8 @@ public class LoginServe {
 
     @Autowired
     private UserServiceImpl userService;
-
+    @Autowired
+    private FriendliesServiceImpl friendliesService;
     //登录
     @RequestMapping( value = "/login",method = RequestMethod.POST)
     public R login(HttpServletRequest request,@RequestBody LoginParam params){
@@ -180,9 +183,39 @@ public class LoginServe {
      * @return
      */
     @RequestMapping("/user/search/userName")
-    protected List<User> userSearchUserName(@RequestBody Map<String, Object> params){
+    protected List<User> userSearchUserName(HttpServletRequest request,@RequestBody Map<String, Object> params){
         //TODO 应该把密码隐藏，感觉还有sql注入的漏洞
-        return userService.loadLikeName("%"+(String) params.get("search")+"%");
+        List<User> list=userService.loadLikeName("%"+(String) params.get("search")+"%");
+
+        //要排除掉自己，和已经添加好友的用户
+        User user= userService.loadByName((String)request.getSession().getAttribute("userName"));
+        List<Friendlies> friendlies= friendliesService.loadFriendByUserYAndType(Integer.parseInt(user.getUserId().toString()));
+        Iterator<User> iterator=list.iterator();
+        while (iterator.hasNext()){
+            User u=iterator.next();
+            //删除自己
+            if(u.getUserId().equals(user.getUserId())){
+                iterator.remove();
+            }
+
+            //删除好友
+            for(Friendlies item:friendlies){
+                if(item.getUserX()== Integer.parseInt(user.getUserId().toString())){
+                    if(item.getUserY() ==Integer.parseInt(u.getUserId().toString())){
+                        iterator.remove();
+                        break;
+                    }
+                }
+                if(item.getUserY()== Integer.parseInt(user.getUserId().toString())){
+                    if(item.getUserX() ==Integer.parseInt(u.getUserId().toString())){
+                        iterator.remove();
+                        break;
+                    }
+                }
+
+            }
+        }
+        return list;
     }
 
 

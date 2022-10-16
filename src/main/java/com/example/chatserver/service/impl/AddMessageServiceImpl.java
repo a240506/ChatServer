@@ -38,4 +38,14 @@ public class AddMessageServiceImpl {
         List<AddMessage> list=addMessageDao.loadAddMessageByUserYAndType(addMessage);
         return list;
     }
+    public boolean delete(int id){
+        if(addMessageDao.delete(id)==1l){
+            return true;
+        }
+        return false;
+    }
+
+    public AddMessage loadById(int id){
+        return addMessageDao.loadById(id);
+    }
 }

@@ -17,6 +17,6 @@ import lombok.ToString;
 @Data
 public class Friendlies {
     private Long _id;
-    private Long userX;
-    private Long userY;
+    private int userX;
+    private int userY;
 }

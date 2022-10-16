@@ -12,5 +12,12 @@
                )
         ]]>
 </insert>
-
+    <!--loadFriendByUserYAndType-->
+    <select id="loadFriendByUserYAndType" parameterType="java.lang.Integer" resultType="com.example.chatserver.bean.Friendlies">
+<![CDATA[
+        select *
+        from friendlies
+        where userX=#{userX} or userY=#{userX}
+        ]]>
+</select>
 </mapper>
