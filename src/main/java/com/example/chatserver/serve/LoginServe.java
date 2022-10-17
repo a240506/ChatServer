@@ -63,27 +63,41 @@ public class LoginServe {
 
     @RequestMapping( value = "/register",method = RequestMethod.POST)
     // 这里注册也用 LoginParam 都一样
-    public R register(HttpServletRequest request,@RequestBody LoginParam params){
+    //Map<String, Object> params
+    public R register(HttpServletRequest request,@RequestBody Map<String, Object> params) throws IOException {
         String  captcha=(String)request.getSession().getAttribute("captcha");
         //判断验证码是否正确
-        if(!params.getVcCode().equals(captcha)){
-            return Tool.result(null,0,"登录失败,验证码错误");
-        }
-        //这里判断用户名是否重复
-        if(userService.loadByName(params.getUserName())!=null){
-            return Tool.result(null,0,"用户名重复");
-        }
-        User user=new User();
-        user.setUserName(params.getUserName());
-        user.setPassword(params.getPassword());
-        user.setType(params.getType());
+        //if(!params.getVcCode().equals(captcha)){
+        //    return Tool.result(null,0,"登录失败,验证码错误");
+        //}
+        ////这里判断用户名是否重复
+        //if(userService.loadByName(params.getUserName())!=null){
+        //    return Tool.result(null,0,"用户名重复");
+        //}
+        //User user=new User();
+        //user.setUserName(params.getUserName());
+        //user.setPassword(params.getPassword());
+        //user.setType(params.getType());
+        //user.setAvatarUrl();
         //TODO 头像地址设置，目前没有搞
-        user.setAvatarUrl("@/assets/image/logo.png");
+        //user.setAvatarUrl("@/assets/image/logo.png");
 
-        long l= userService.userRegister(user);
-        if(l==1){
-            return Tool.result(null,200,"注册成功");
-        }
+
+        //long l= userService.userRegister(user);
+        //if(l==1){
+        //    return Tool.result(null,200,"注册成功");
+        //}
+
+        //System.out.println(params);
+
+
+
+        System.out.println((String)params.get("avatarUrl"));
+        //图片下载
+        Tool.downloadFile((String)params.get("avatarUrl"),"D:\\迅雷下载\\my-chat项目图片文件夹\\images","a.jpg");
+
+
+
         return Tool.result(null,0,"注册失败");
     }
     //判断是否登录过了
@@ -218,7 +232,21 @@ public class LoginServe {
         return list;
     }
 
+    /**
+     * 获取头像名
+     * @return
+     */
+    @RequestMapping("/avatars")
+    public List<String>  getAvatars() {
+        File file=new File("D:\\迅雷下载\\my-chat项目图片文件夹\\avatars");
+        List<File> list=Tool.getAllFile(file);
+        List<String> avatars=new ArrayList<>();
+        for(File item :list){
+            avatars.add(item.getName());
+        }
 
+        return avatars;
+    }
 
     @RequestMapping("/hello")
     public String  hello(HttpServletRequest request, HttpServletResponse response) {
@@ -228,6 +256,8 @@ public class LoginServe {
 
         return userService.loadByName("test2").toString();
     }
+
+
 
 
 
