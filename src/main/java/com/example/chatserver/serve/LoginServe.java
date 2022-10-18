@@ -9,10 +9,6 @@ import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.LoginParam;
 import com.example.chatserver.vo.RegisterParen;
 import com.wf.captcha.ArithmeticCaptcha;
-import com.wf.captcha.ChineseCaptcha;
-import com.wf.captcha.GifCaptcha;
-import com.wf.captcha.SpecCaptcha;
-import java.security.MessageDigest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,9 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /*
 文件创建于  2022/09/17  17：01

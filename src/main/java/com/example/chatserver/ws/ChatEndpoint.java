@@ -106,7 +106,7 @@ public class ChatEndpoint {
         //群发当前所有在线用户信息
         //SocketMessage socketMessage=new SocketMessage("getOnlineUsersInfo",getOnlineUsersInfo());
         //this.send(socketMessage.toJSONString());
-        sendMessage(getOnlineUsersInfo(),"getOnlineUsersInfo");
+        //sendMessage(getOnlineUsersInfo(),"getOnlineUsersInfo");
         LOGGER.info(userName+"上线");
 
     }

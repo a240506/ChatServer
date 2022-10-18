@@ -206,4 +206,24 @@ public class Tool {
         return new String(md5.digest()) ;
     }
 
+    /**
+     * 类型转换
+     * @param n
+     * @return
+     */
+    public static int Long2Int(Long n)  {
+        return Integer.parseInt(n.toString());
+    }
+
+    public static String selfMoveFile(String physicalPath){
+
+        String filename=physicalPath.substring(physicalPath.lastIndexOf("\\")+1);
+
+        if(Tool.moveFileToTarget(physicalPath,"D:\\迅雷下载\\my-chat项目图片文件夹\\images\\"+filename)){
+            return "http://localhost:19091/static/images/"+filename;
+
+        }
+        return "";
+    }
+
 }
