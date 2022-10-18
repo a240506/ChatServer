@@ -7,10 +7,12 @@ import com.example.chatserver.common.Tool;
 import com.example.chatserver.service.impl.FriendliesServiceImpl;
 import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.LoginParam;
+import com.example.chatserver.vo.RegisterParen;
 import com.wf.captcha.ArithmeticCaptcha;
 import com.wf.captcha.ChineseCaptcha;
 import com.wf.captcha.GifCaptcha;
 import com.wf.captcha.SpecCaptcha;
+import java.security.MessageDigest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -35,16 +38,18 @@ public class LoginServe {
     private FriendliesServiceImpl friendliesService;
     //登录
     @RequestMapping( value = "/login",method = RequestMethod.POST)
-    public R login(HttpServletRequest request,@RequestBody LoginParam params){
+    public R login(HttpServletRequest request,@RequestBody LoginParam params) throws Exception {
         String  captcha=(String)request.getSession().getAttribute("captcha");
         //判断验证码是否正确
         if(!params.getVcCode().equals(captcha)){
             return Tool.result(null,0,"登录失败,验证码错误");
         }
-        //Map<String,Object> meta = new HashMap<String,Object>();
+        //密码改成加密的
+        params.setPassword(Tool.decryMD5(params.getPassword()));
         User user=null;
         //用户登录
         if(params.getType().equals("user")){
+
             user= userService.userLogin(params.getUserName(),params.getPassword());
         //    管理员登录
         }else if(params.getType().equals("admin")){
@@ -64,39 +69,40 @@ public class LoginServe {
     @RequestMapping( value = "/register",method = RequestMethod.POST)
     // 这里注册也用 LoginParam 都一样
     //Map<String, Object> params
-    public R register(HttpServletRequest request,@RequestBody Map<String, Object> params) throws IOException {
+    public R register(HttpServletRequest request, @RequestBody RegisterParen params) throws Exception {
         String  captcha=(String)request.getSession().getAttribute("captcha");
         //判断验证码是否正确
-        //if(!params.getVcCode().equals(captcha)){
-        //    return Tool.result(null,0,"登录失败,验证码错误");
-        //}
-        ////这里判断用户名是否重复
-        //if(userService.loadByName(params.getUserName())!=null){
-        //    return Tool.result(null,0,"用户名重复");
-        //}
-        //User user=new User();
-        //user.setUserName(params.getUserName());
-        //user.setPassword(params.getPassword());
-        //user.setType(params.getType());
-        //user.setAvatarUrl();
-        //TODO 头像地址设置，目前没有搞
-        //user.setAvatarUrl("@/assets/image/logo.png");
+        if(!params.getVcCode().equals(captcha)){
+            return Tool.result(null,0,"登录失败,验证码错误");
+        }
+        //这里判断用户名是否重复
+        if(userService.loadByName(params.getUserName())!=null){
+            return Tool.result(null,0,"用户名重复");
+        }
+        User user=new User();
+        user.setUserName(params.getUserName());
 
+        user.setPassword(Tool.decryMD5(params.getPassword()));
+        user.setType(params.getType());
 
-        //long l= userService.userRegister(user);
-        //if(l==1){
-        //    return Tool.result(null,200,"注册成功");
-        //}
+        //设置用户头像
+        if(params.getOriginalFileName()!=null){
+            String savePath=params.getPhysicalPath().substring(0,params.getPhysicalPath().lastIndexOf("temp\\")-1)+"\\images";
+            String filename=params.getPhysicalPath().substring(params.getPhysicalPath().lastIndexOf("\\")+1);
+            //图片下载
+            Tool.downloadFile(params.getAvatarUrl(),savePath,filename);
+            // TODO 这里应该设置静态变量
+            user.setAvatarUrl("http://localhost:19091/static/images/"+filename);
+        }else{
+            user.setAvatarUrl(params.getAvatarUrl());
+        }
+        //设置注册时间
+        user.setSignUpTime(Tool.getTimeString("yyyy-MM-dd HH:mm:ss"));
 
-        //System.out.println(params);
-
-
-
-        System.out.println((String)params.get("avatarUrl"));
-        //图片下载
-        Tool.downloadFile((String)params.get("avatarUrl"),"D:\\迅雷下载\\my-chat项目图片文件夹\\images","a.jpg");
-
-
+        long l= userService.userRegister(user);
+        if(l==1){
+            return Tool.result(null,200,"注册成功");
+        }
 
         return Tool.result(null,0,"注册失败");
     }

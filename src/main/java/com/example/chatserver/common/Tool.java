@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,6 +25,7 @@ import java.util.*;
 */
 public class Tool {
     private static final ObjectMapper JSON = new ObjectMapper();
+    private static final String SALT="fang";
     private final static Logger LOGGER = LogManager.getLogger(Tool.class);
     public static R result(Object data, int n, String msg){
         Map<String,Object> meta = new HashMap<String,Object>();
@@ -187,7 +189,21 @@ public class Tool {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
+
+    /**
+     * md5加密 ,默认加盐
+     * @param data
+     * @return
+     * @throws Exception
+     */
+    public static String decryMD5(String data) throws Exception {
+        data+=SALT;
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+
+        md5.update(data.getBytes());
+
+        return new String(md5.digest()) ;
+    }
+
 }

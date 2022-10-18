@@ -18,7 +18,7 @@
 <![CDATA[
         select *
         from pyqnews
-        where userName=#{name}
+        where userName=#{name} ORDER BY _id DESC
         ]]>
 </select>
 </mapper>
