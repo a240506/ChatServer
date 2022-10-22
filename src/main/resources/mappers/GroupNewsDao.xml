@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.chatserver.dao.GroupNewsDao">
+    <insert id="insert" parameterType="com.example.chatserver.bean.GroupNews">
+<![CDATA[
+        insert into group_news(
+            time,senderId,senderUserName,senderAvatar,message ,messageType,groupId
+        )values(
+                   #{time},#{senderId},#{senderUserName},#{senderAvatar},#{message},#{messageType},#{groupId}
+               )
+        ]]>
+</insert>
+
+    <select id="loadGroupNewsByGroupId" parameterType="java.lang.Integer" resultType="com.example.chatserver.bean.GroupNews">
+<![CDATA[
+        select *
+        from group_news
+        where groupId=#{groupId}
+        ]]>
+</select>
+</mapper>

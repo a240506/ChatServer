@@ -15,7 +15,7 @@ import lombok.ToString;
 @Data
 public class GroupNews {
     private int _id;
-    private String createDate;
+    private String time;
     private int senderId;
     private String senderUserName;
     private String senderAvatar;
