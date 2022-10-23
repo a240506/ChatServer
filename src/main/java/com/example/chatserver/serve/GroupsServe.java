@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /*
 文件创建于  2022/10/18  17：17
@@ -46,5 +47,12 @@ public class GroupsServe {
         String userName=(String)request.getSession().getAttribute("userName");
         groups.setHolderName(userName);
         return  groupsService.loadByHolderNameOrId(groups);
+    }
+
+
+    @RequestMapping("/search/groups")
+    protected List<Groups> searchGroups(@RequestBody CreateGroupsParam groups){
+        System.out.println(groups.getGroupsName());
+        return groupsService.loadLikeGroupsName(groups);
     }
 }

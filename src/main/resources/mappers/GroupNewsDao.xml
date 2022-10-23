@@ -6,9 +6,9 @@
     <insert id="insert" parameterType="com.example.chatserver.bean.GroupNews">
 <![CDATA[
         insert into group_news(
-            time,senderId,senderUserName,senderAvatar,message ,messageType,groupId
+            time,senderId,senderName,senderAvatar,message ,messageType,groupId
         )values(
-                   #{time},#{senderId},#{senderUserName},#{senderAvatar},#{message},#{messageType},#{groupId}
+                   #{time},#{senderId},#{senderName},#{senderAvatar},#{message},#{messageType},#{groupId}
                )
         ]]>
 </insert>

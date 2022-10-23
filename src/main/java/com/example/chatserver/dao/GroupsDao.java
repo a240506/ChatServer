@@ -13,5 +13,8 @@ import java.util.List;
 @Mapper
 @Repository
 public interface GroupsDao extends BaseDao<Groups>{
+    //找用户创建的群
     List<Groups> loadByHolderNameOrId(Groups groups);
+    //模糊查询群名
+    List<Groups> loadLikeGroupsName(Groups groups);
 }

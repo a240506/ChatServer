@@ -21,4 +21,13 @@
         where holderName=#{holderName} or holderUserId=#{holderUserId}
         ]]>
 </select>
+
+
+    <select id="loadLikeGroupsName" parameterType="com.example.chatserver.bean.Groups" resultType="com.example.chatserver.bean.Groups">
+        <![CDATA[
+        select *
+        from group_list
+        where groupsName LIKE #{groupsName}
+        ]]>
+</select>
 </mapper>

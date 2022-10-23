@@ -192,13 +192,13 @@ public class LoginServe {
     }
 
     /**
-     * 用户搜索，根据用户民
+     * 用户搜索，根据用户名
      * @param params
      * @return
      */
     @RequestMapping("/user/search/userName")
     protected List<User> userSearchUserName(HttpServletRequest request,@RequestBody Map<String, Object> params){
-        //TODO 应该把密码隐藏，感觉还有sql注入的漏洞
+        //TODO 感觉还有sql注入的漏洞
         List<User> list=userService.loadLikeName("%"+(String) params.get("search")+"%");
 
         //要排除掉自己，和已经添加好友的用户

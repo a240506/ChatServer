@@ -25,4 +25,8 @@ public class GroupsServiceImpl {
 
         return  groupsDao.loadByHolderNameOrId(groups);
     }
+
+    public List<Groups> loadLikeGroupsName(Groups groups){
+        return  groupsDao.loadLikeGroupsName(groups);
+    }
 }

@@ -20,5 +20,5 @@ public class GroupUsers {
     private int groupId;
     private int userId;
     private String userName;
-    private MessageType createDate;
+    private String createDate;
 }

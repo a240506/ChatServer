@@ -17,7 +17,7 @@ public class GroupNews {
     private int _id;
     private String time;
     private int senderId;
-    private String senderUserName;
+    private String senderName;
     private String senderAvatar;
     private String message;
     private MessageType messageType;
