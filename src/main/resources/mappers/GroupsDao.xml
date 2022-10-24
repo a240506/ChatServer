@@ -30,4 +30,11 @@
         where groupsName LIKE #{groupsName}
         ]]>
 </select>
+    <select id="loadById" parameterType="java.lang.Integer" resultType="com.example.chatserver.bean.Groups">
+<![CDATA[
+        select *
+        from group_list
+        where _id=#{id}
+        ]]>
+</select>
 </mapper>

@@ -21,4 +21,5 @@ public class GroupUsers {
     private int userId;
     private String userName;
     private String createDate;
+    private String userAvatar;
 }

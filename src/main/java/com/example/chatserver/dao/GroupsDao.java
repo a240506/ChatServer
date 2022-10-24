@@ -17,4 +17,6 @@ public interface GroupsDao extends BaseDao<Groups>{
     List<Groups> loadByHolderNameOrId(Groups groups);
     //模糊查询群名
     List<Groups> loadLikeGroupsName(Groups groups);
+
+    Groups loadById(int id);
 }

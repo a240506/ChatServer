@@ -16,12 +16,11 @@
     <insert id="insert" parameterType="com.example.chatserver.bean.GroupUsers">
 <![CDATA[
         insert into group_users(
-            groupId,userId,userName,createDate
+            groupId,userId,userName,createDate,userAvatar
         )values(
-                   #{groupId},#{userId},#{userName},#{createDate}
+                   #{groupId},#{userId},#{userName},#{createDate},#{userAvatar}
                )
         ]]>
-
-
 </insert>
+
 </mapper>

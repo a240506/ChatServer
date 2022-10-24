@@ -1,11 +1,13 @@
 package com.example.chatserver.ws;
 
 import com.example.chatserver.bean.AddMessage;
+import com.example.chatserver.bean.Groups;
 import com.example.chatserver.bean.News;
 import com.example.chatserver.bean.User;
 import com.example.chatserver.common.Tool;
 import com.example.chatserver.common.enumType.add_message_type;
 import com.example.chatserver.service.impl.AddMessageServiceImpl;
+import com.example.chatserver.service.impl.GroupsServiceImpl;
 import com.example.chatserver.service.impl.NewsServiceImpl;
 import com.example.chatserver.service.impl.UserServiceImpl;
 import com.example.chatserver.vo.SocketMessage;
@@ -62,6 +64,12 @@ public class ChatEndpoint {
     @Autowired
     public void setAddMessageService(AddMessageServiceImpl addMessageService){
         ChatEndpoint.addMessageService=addMessageService;
+    }
+
+    private static GroupsServiceImpl groupsService;
+    @Autowired
+    public void setGroupsService(GroupsServiceImpl groupsService){
+        ChatEndpoint.groupsService=groupsService;
     }
 
 
@@ -391,6 +399,11 @@ public class ChatEndpoint {
         return false;
     }
 
+    /**
+     * 接收添加好友和群的消息，这里添加好友和添加群是共用一个函数
+     * @param map
+     * @return
+     */
     private Boolean addFriend(Map<String,Object> map){
         // 枚举类型手动转换下
         map.put("type",add_message_type.values()[(int)map.get("type")]);
@@ -404,7 +417,16 @@ public class ChatEndpoint {
             Map<String,Object> res=new HashMap<>();
 
             User user= userService.loadById(addMessage.getUserY());
-            res.put("userY",user);
+
+            if(addMessage.getType()==add_message_type.friend){
+                res.put("userY",user);
+            }else if(addMessage.getType()==add_message_type.group){
+                Groups groups= groupsService.loadById(addMessage.getUserY());
+                res.put("userY",groups);
+                user= userService.loadById(groups.getHolderUserId());
+                System.out.println(user);
+            }
+
             res.put("userX",userService.loadById(addMessage.getUserX()));
             res.put("message",addMessage.getMessage());
             res.put("type",addMessage.getType());
